@@ -317,6 +317,18 @@ LAB_00000684:
         update_epbl_progress_word(6, host_ready);
         block_read_func = call_ufs_read_blocks_wrapper;
         epbl_load_addr0 = (uintptr_t)get_epbl_load_addr();
+        /*
+enum {
+  UFS_UPIU_REPORT_LUNS_WLUN  = 0x81,
+  UFS_UPIU_UFS_DEVICE_WLUN  = 0xD0,
+  UFS_UPIU_BOOT_WLUN    = 0xB0,
+  UFS_UPIU_RPMB_WLUN    = 0xC4,
+
+  --> we are using the boot lun to load off
+};
+
+
+        */
         epbl_block_read_done = (*block_read_func)(0, 0, 0xb0U, epbl_load_addr0, iVar3, 1, 0x1000U);
 
         if (epbl_block_read_done == 0U) {

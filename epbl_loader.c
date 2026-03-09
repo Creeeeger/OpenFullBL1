@@ -27,12 +27,14 @@ void bootlog_store_elapsed_ticks(uint32_t log_slot_addr)
 uint32_t host_issue_cmd_and_wait(uint32_t host, uint32_t cmd, uint32_t arg)
 {
     uintptr_t host_base = ufs_host_base(host);
+    uint32_t v = ((cmd & 0xffffU) << 16U) | (arg & 0xffffU);
 
     mmio_write32((uint32_t)(host_base + 0x20U), 0x400U);
-    mmio_write32((uint32_t)(host_base + 0x94U), arg | (cmd << 16U));
+    mmio_write32((uint32_t)(host_base + 0x94U), v);
     mmio_write32((uint32_t)(host_base + 0x90U), 1U);
 
-    while (((mmio_read32((uint32_t)(host_base + 0x20U)) >> 10U) & 1U) == 0U) {
+    while ((mmio_read32((uint32_t)(host_base + 0x20U)) & 0x400U) == 0U) {
+        
     }
 
     mmio_write32((uint32_t)(host_base + 0x20U), 0x400U);
